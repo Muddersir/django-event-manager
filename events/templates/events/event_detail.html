@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded shadow">
+  <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-2xl font-bold">{{ event.name }}</h1>
+      <p class="text-sm text-gray-600">{{ event.date }} {{ event.time }} · {{ event.location }}</p>
+      <p class="mt-4">{{ event.description }}</p>
+      <p class="mt-2">Category: <strong>{{ event.category.name }}</strong></p>
+    </div>
+    <div>
+      <a href="{% url 'events:event_update' event.pk %}" class="px-3 py-2 border rounded">Edit</a>
+      <a href="{% url 'events:event_delete' event.pk %}" class="px-3 py-2 border rounded">Delete</a>
+    </div>
+  </div>
+
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold">Participants ({{ event.participants.count }})</h2>
+    <ul class="mt-2 space-y-2">
+      {% for p in event.participants.all %}
+        <li class="p-2 border rounded">{{ p.name }} — {{ p.email }}</li>
+      {% empty %}
+        <li class="text-gray-500">No participants added yet.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

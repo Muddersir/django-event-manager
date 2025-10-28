@@ -1,0 +1,39 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Event Manager{% endblock %}</title>
+  {% load static %}
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Tailwind CDN quick-start (for production use a build) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-800">
+  <body class="bg-gray-100 min-h-screen">
+  <nav class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> 
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'events:dashboard' %}" class="text-xl font-semibold">EventManager</a>
+          <a href="{% url 'events:event_list' %}" class="text-sm">Events</a>
+          <a href="{% url 'events:participant_list' %}" class="text-sm">Participants</a>
+          <a href="{% url 'events:category_list' %}" class="text-sm">Categories</a>
+        </div>
+        <div>
+          <a href="{% url 'admin:index' %}" class="text-sm text-blue-600">Admin</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto p-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 p-6">
+    © {{ now|date:"Y" }} Event Manager
+  </footer>
+</body>
+</html>

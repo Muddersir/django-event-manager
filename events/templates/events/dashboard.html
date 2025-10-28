@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Organizer Dashboard</h1>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="p-4 bg-white rounded shadow cursor-pointer stat-card" data-type="total">
+    <div class="text-sm">Total Participants</div>
+    <div class="text-2xl font-bold" id="total-participants">{{ total_participants }}</div>
+  </div>
+  <div class="p-4 bg-white rounded shadow cursor-pointer stat-card" data-type="total_events">
+    <div class="text-sm">Total Events</div>
+    <div class="text-2xl font-bold" id="total-events">{{ total_events }}</div>
+  </div>
+  <div class="p-4 bg-white rounded shadow cursor-pointer stat-card" data-type="upcoming">
+    <div class="text-sm">Upcoming Events</div>
+    <div class="text-2xl font-bold" id="upcoming-events">{{ upcoming_events }}</div>
+  </div>
+  <div class="p-4 bg-white rounded shadow cursor-pointer stat-card" data-type="past">
+    <div class="text-sm">Past Events</div>
+    <div class="text-2xl font-bold" id="past-events">{{ past_events }}</div>
+  </div>
+</div>
+
+<section class="bg-white p-4 rounded shadow">
+  <h2 class="font-semibold mb-2" id="list-title">Today's Events</h2>
+  <div id="event-list">
+    {% for ev in todays_events %}
+      <div class="p-3 border-b">
+        <div class="flex justify-between">
+          <div>
+            <div class="font-semibold">{{ ev.name }}</div>
+            <div class="text-sm text-gray-600">{{ ev.time }} · {{ ev.location }} · {{ ev.category.name }}</div>
+          </div>
+          <div class="text-sm">{{ ev.participants.count }} participants</div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-gray-500">No events today.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  // Add interactivity: clicking stat cards fetches corresponding events via /api/stats/?type=...
+  document.querySelectorAll('.stat-card').forEach(card => {
+    card.addEventListener('click', function() {
+      let type = this.dataset.type;
+      let titleMap = {
+        'total': "All Events",
+        'total_events': "All Events",
+        'upcoming': "Upcoming Events",
+        'past': "Past Events"
+      };
+      document.getElementById('list-title').innerText = titleMap[type] + " (Top 10)";
+      fetch(`/api/stats/?type=${type}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('event-list');
+          container.innerHTML = '';
+          if (data.events.length === 0) {
+            container.innerHTML = '<div class="text-gray-500 p-3">No events.</div>';
+          } else {
+            data.events.forEach(ev => {
+              container.innerHTML += `
+                <div class="p-3 border-b">
+                  <div class="flex justify-between">
+                    <div>
+                      <div class="font-semibold">${ev.name}</div>
+                      <div class="text-sm text-gray-600">${ev.date} ${ev.time} · ${ev.location}</div>
+                    </div>
+                    <div class="text-sm">—</div>
+                  </div>
+                </div>
+              `;
+            });
+          }
+        })
+        .catch(err => console.error(err));
+    });
+  });
+</script>
+{% endblock %}
